@@ -1,4 +1,4 @@
-# Programming Assignment 2
+# Programming Assignment: Multiple Threaded Application
 
 **Goal:** Using `pthreads` to code a DNS name resolution engine
 
@@ -163,16 +163,16 @@ Once you are assured that your application can write and read to the buffer corr
 ![](images/Step3.png)
 
 ### Step 4
-We can now run with a single `parsor` and a single `converter` passing information via a shared buffer that is protected by a mutex.  The next step is to create multiple `parsor` threads to read from multiple different files.  Each `parsor` can read single lines from a different file.  The `parsor` will terminate when all lines from the file have been  processed.
+We can now run with a single `parser` and a single `converter` passing information via a shared buffer that is protected by a mutex.  The next step is to create multiple `parser` threads to read from multiple different files.  Each `parser` can read single lines from a different file.  The `parser` will terminate when all lines from the file have been  processed.
 
 ![](images/Step4.png)
 
 ### Step 5
-The next step will create multiple `converter` threads to read from multiple `parsor` threads via a single shared buffer.  The `converter` will wait for data (spin wait is acceptable) but will terminate if there are no active `parsor` and the buffer is empty.  
+The next step will create multiple `converter` threads to read from multiple `parser` threads via a single shared buffer.  The `converter` will wait for data (spin wait is acceptable) but will terminate if there are no active `parser` and the buffer is empty.  
 ![](images/Step5.png)
 
 ### Step 6
-Moving back to the `parsor` threads, each thread must record the data it has processed.  Files are a shared resource and therefore must be protected from multiple processes accessing it.
+Moving back to the `parser` threads, each thread must record the data it has processed.  Files are a shared resource and therefore must be protected from multiple processes accessing it.
 ![](images/Step6.png)
 
 ### Step 7 - Extra Credit
@@ -220,7 +220,7 @@ sudo apt-get install valgrind
 And to use `valgrind` to monitor your program, use this command:
 
 ```
-valgrind ./pa2main text1.txt text2.txt ...... textN.txt results.txt
+valgrind ./pa_mt_main text1.txt text2.txt ...... textN.txt results.txt
 ```
 
 Valgrind should report that you have freed all allocated memory and should not produce any additional warnings or errors.
@@ -258,7 +258,7 @@ There are a few options for receiving extra credit on this assignment. Completio
 Each line can contain more than one domain name.  `Parser` threads would need to handle extraction of multiple names per line.
 
 - **Creating API for Accessing Input Data**
-Step 7 in the description above creates an API to abstract access to the input lines for the `parsor` threads.
+Step 7 in the description above creates an API to abstract access to the input lines for the `parser` threads.
 
 - **Multiple IP Addresses**   
 Many domain names return more than a single IP address. Add support for listing an arbitrary number of addresses to your program.  You may find it necessary to modify code in the util.h and util.c files to add this functionality. If you do this, please maintain backwards compatibility with the existing `util.h` functions. This is most easily done by adding new function instead of modifying the existing ones.   These addresses should be printed to the output file as additional comma-separated strings after the domain name.
